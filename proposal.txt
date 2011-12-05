@@ -1,0 +1,52 @@
+Final project proposal
+
+My proposal is to create a blog which keeps track of its state on a regular interval (every 30 seconds, give or take). Lots of blogs already do this and use it to save the contents of the textbox just in case the brower closes unexpectedly. My intention is to have it keep track of the age of each word, so that when the text is finally posted, people can get a picture of how the text was edited; whether one section was frequently rewritten, if the text was written all at once in a minute or two, or other things about it.
+
+My inspiration is the inverted pyramid. It's a way of describing newspaper articles, where the most important information is placed on top, and the details become more and more minor as the person reads down the article. Using my blog, people could see (or write to be seen) material and know which parts of it were important to the author. Currently 
+
+Order of implementation:
+• milestone 1 - flesh out the blog. Make it decent-looking, have users and log-in functionality, and basic sanitation of input.
+• milestone 2 - make the blog save data to the server regularly using AJAX. Have some type of functionality to recover a blog post in progress
+• milestone 3 - parse the data into tokens, compute the age of each word, and store that information. 
+• milestone 4 - rewrite post display code to take this information into account. My first idea is to make older words greyer (lighter than the default black). There are probably other better ways to communicate this information which I'll also work on in this milestone
+
+models, what they represent, attributes, associations, validations
+Models:
+• user - this is information specific to a logged-in user. This will include a unique id, unique username, authentication info (however OpenID does this), and a blog id to connect a user to its own blog. Validations: id and username are unique. Associations: user has one blog, a user has many and belongs to many users. See 'friends' below.
+• blog - This has the main information about a blog. There should be a unique blog id, a user id (the user which owns the blog), a style id (set of information describing how to decorate a blog), a title, and a description. Validations: the blog id is unique. Associations: blog belongs to user, blog belongs to style, blog has many posts.
+• post - A blog has many posts, which are the pieces of text a user posts at one time. A post has a unique post id, blog id to show which blog it belongs to, the subject of the post, its text, a word table id (see below), and is_viewable. Validations: blog id is unique. Text and subject are not null (but can be empty strings). Associations: a post belongs to a blog. A post has one word table.
+• word table - This has all of the words in the current post text. There is the word text itself, its position in the text, its age, and its word index. (Where the position is an offset of characters, the word index is an offset of words.) Validations: word index offset and position are unique. Associations: word table belongs to a post.
+• comment - Comments are small pieces of text which a user posts commenting on a post. A comment has these attributes: its unique id, its text, the subject text, the id of the post, and the user id. There may be another attribute saying whether the commenter is anonymous or not, if I decide to allow anonymous comments. Validations: its id is unique, and nothing can be null. Associations: a comment belongs to a post. A comment belongs to user.
+• friends - this is a join table. It describes that one user is friends with another user. There are two attributes, one for each user id. Friendships are not meaningful in a security sense (posts are never protected from public viewing), but they can be used to show relationships between users.
+• style - this has the descriptive information used to display pages related to a user. (This does not change the layout depending on who sees it, it changes it depending on what's seen.) Essentially, it's CSS information which is then applied to the page with the browser. It has a unique style id, CSS text to be displayed, and a filename of a CSS file. One or both may be used, depending if they're NULL or not. Validations: style id is unique. Associations: a style has many blogs.
+
+Use cases:
+• The user will be able to log in and out with OpenID.
+• When logged in, the user will be able to post to and edit their own blog, and comment to any post of any blog. People who aren't logged in will only be able to view posts. They may also be able to comment on other blogs, depending on if I decide to implement anonymous comments.
+• The user will be able to post in their own blog. (A blog is automatically created along with the user.)
+• The user will be able to comment on other (or their own) post.
+• The user will be able to start creating a post, shut down their browser, go back to the editing page, and continue editing their post where they left off, without client-side storage
+• When viewing any post, the user should see more important posts visualized in some interesting way.
+• The user will be able to change the style, title, and description of their blog. The style will be a drop-down list of premade css templates.
+• The user will be able to add and remove friends (other users). This should be accessible on a user's blog or their profile page.
+
+
+Pages:
+• user - login. The login page
+• user - profile. If a user is viewing their own profile, they should be able to change their settings. (Their title, description, and style.) They should be able to remove friends here too if they're viewing their own profile, and if they're viewing another profile, they should be able to add as a friend.
+• blog - rss feed
+• blog - view posts. This will have links to each post. By default, it will be the latest 5 or 10 posts, but there will be a link to go further back in time. If the viewer is the user, there should be links to edit each post, and to create a new post. A user should be able to add 
+• post - view post. Shows a post while visualizing the important pieces in a way that makes sense. This should also give users the ability to edit their own post. People can post comments here.
+• post - edit post. This should send content to the server regularly using AJAX. Submitting the post should update the post.
+• post - create post. The functionality is the same as edit post, but the post should not be viewable until the submit button is clicked.
+• blog - view friends' posts. This should look similar to 'blog - view posts', but it should collect posts of friends, sort them, and display them chronologically.
+• post - delete post.
+
+
+Features:
+• AJAX - the post content saving mechanism demands the use of AJAX to be unobtrusive. Data is sent to the server to be saved, and if necessary, the information is brought back when it was lost. The server will calculate the age of different words and keep track of this.
+• feeds - each blog will have a feed listing in RSS
+• openid - logging in and out will use openid ids for authentication.
+
+
+third commit

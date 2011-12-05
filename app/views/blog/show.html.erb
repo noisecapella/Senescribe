@@ -1,0 +1,65 @@
+<%
+@title = @blog.title + " by " + @blog.user.description
+@preferred_stylesheet = @blog.style.stylesheet
+posts = Post.find(:all)
+
+posts = Post.find(:all,
+                  :conditions => ["blog_id = ? AND is_viewable = 't'", @blog.id],
+                  :order => "created_at DESC",
+                  :limit => @blog.posts_per_page,
+                  :offset => @offset)
+
+%>
+<p><%=h "Showing %s posts per page" % @blog.posts_per_page %>
+
+
+
+
+
+<% if @offset - @blog.posts_per_page >= 0 %>
+
+<%= link_to "Previous %s" % @blog.posts_per_page, :action => :show, :params => {:offset => (@offset + @blog.posts_per_page).to_s } %>
+
+<% end %>
+<% if @offset + @blog.posts_per_page <= posts.length %>
+
+<%= link_to "Next %s" % @blog.posts_per_page, :action => :show, :params => {:offset => (@offset - @blog.posts_per_page).to_s } %>
+
+<% end %>
+
+
+</p>
+<%= link_to "Edit blog info", :action => :edit, :id => @blog if !@user.nil? %>
+<% if @user and @user.blog and @user.blog.id == @blog.id %>
+<p><%= link_to "Write something", :action => :new_post %></p>
+<% end %>
+
+<%
+if posts.count > 0
+for post in posts
+
+%>  
+<div class="post">
+<div style="float: right;">
+<%= link_to "See entry", :controller => :post, :action => :show, :id => post.id %>
+<br />
+Last Updated <%= post.updated_at %>
+</div>
+
+<div class="title" style="height: 30px; ">
+    <%=h post.subject %>
+</div>
+
+<div class="content">
+<%= render(:partial => "post/post", :locals => {:post => post, :user => @user })
+ %>
+</div>
+</div>
+<%
+  end #for
+
+else
+%>
+<p>You have no posts.</p>
+  <% end #if %>
+

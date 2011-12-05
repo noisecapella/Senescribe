@@ -1,0 +1,10 @@
+
+<% form_for :user, :url => {:action => :update, :id => @user.id } do |form| %>
+<p><label for="email">Email:</label>
+<%= form.text_field :email %></p>
+<p><label for="description">Description:</label>
+<%= form.text_field :description %></p>
+<%= submit_tag "Update", :class => :button %>
+<% end %>
+
+<%= link_to "Add or remove friends", :action => :change_friends %>

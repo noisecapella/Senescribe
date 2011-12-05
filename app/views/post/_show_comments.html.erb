@@ -1,0 +1,31 @@
+<%
+     comments = Comment.find(:all,
+                          :conditions => ["post_id = ?", post.id],
+                          :order => "created_at ASC",
+                          :limit => comments_per_page,
+                          :offset => offset)
+blog = post.blog
+%>
+<p><%=h "Showing %s comments per page" % blog.comments_per_page %>
+    <% if offset - blog.comments_per_page >= 0 %>
+<%= link_to "Previous %s" % blog.comments_per_page, :action => :show, :params => {:offset => (offset - blog.comments_per_page).to_s } %>
+<% end %>
+<% if offset + blog.comments_per_page <= comments.length %>
+<%= link_to "Next %s" % blog.comments_per_page, :action => :show, :params => {:offset => (offset + blog.comments_per_page).to_s } %>
+<% end %>
+</p>
+
+<table width="100%">
+    <% for comment in comments %>
+    <tr>
+        <td>
+            Post by <%=h comment.user.description %><br />
+            <b>Subject</b>: <%=h comment.subject %><br />
+            &nbsp; &nbsp; &nbsp; <%=h comment.text %>
+        </td>
+        <td>
+           <%=h comment.updated_at %>
+        </td>
+    </tr>
+    <% end %>
+</table>

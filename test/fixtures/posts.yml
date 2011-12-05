@@ -1,0 +1,12 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# one:
+#   column: value
+#
+# two:
+#   column: value
+one:
+        blog: blog
+        subject: "Post 1"
+        text: "This is post 1"
+        is_viewable: true

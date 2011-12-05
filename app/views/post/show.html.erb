@@ -1,0 +1,25 @@
+<% @title = @post.subject
+   @preferred_stylesheet = @post.blog.style.stylesheet %>
+
+<%= render(:partial => "post", :locals => {:post => @post, :user => @user}) %>
+<hr />
+<%= render(:partial => "show_comments", :locals => {:post => @post, :comments_per_page => @comments_per_page, :offset => @offset}) %>
+
+
+<% if @user.nil? == false %>
+<br /><br /><br /><br />
+<div>
+    <span class="title">Post Comment</span><br />
+    <% form_for :comment, :url => {:controller => :comment, :action => :create} do |form| %>
+    <p><label for="subject">Subject: <%= form.text_field :subject %></label></p>
+<table><tr>
+<td><label for="text">Text:</td><td>
+<%= form.text_area :text, :cols => 100, :rows => 5 %></label></p>
+</td></tr></table>
+
+    <%= form.hidden_field :post_id, :value => @post.id %>
+    <%= form.submit "Post Comment" %>
+    <% end %>
+
+<% end %>
+</div>

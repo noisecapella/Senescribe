@@ -1,0 +1,12 @@
+<% @title = "Welcome" %>
+
+<p>
+<%= if @user.nil? == false
+    link_to "Go to your profile", :controller => :user, :action => :profile, :id => @user
+end %>
+</p>
+<p>
+<%= if @user.nil? == false and @user.blog.nil? == false
+    link_to "Go to your blog", :controller => :blog, :action => :show, :id => @user.blog
+end %>
+</p>

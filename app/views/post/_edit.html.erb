@@ -1,0 +1,25 @@
+<%
+if @post.autosave_text.nil?
+  @autosave_text = @post.text
+else
+  @autosave_text = @post.autosave_text
+end
+%>
+
+<div>
+<% form_for (:post, :html => {:id => "post"}, :url => {:controller => :post, :action => :update, :id => @post }) do |form| %>
+<table>
+<tr>
+<td><label for="subject">Subject:</td>
+<td> <%= form.text_field :subject, :size => 87 %></label></td>
+</tr>
+<tr>
+<td><label for="text">Text:</td><td>
+<%= form.text_area :text, :cols => 100, :rows => 15, :value => @autosave_text %></label></p>
+
+</td></tr>
+</table>
+<%= submit_tag "Post" %>
+
+<% end %>
+</div>

@@ -1,0 +1,13 @@
+<% @title = "Create blog" %>
+
+<% form_for :blog, :url => {:action => :create} do |form| %>
+<p><label for="title">Title: <%= form.text_field :title %></label></p>
+<p><label for="style">Styles: 
+        <%= form.select :style_id, @styles.inject(Hash.new) { |all, style| all[style.name] = style.id; all } %></label></p>
+<p><label for="posts_per_page">Posts per page: 
+<%= form.select :posts_per_page, (1..100).to_a.reject{|n| n % 5 != 0 } %></label></p>
+<p><label for="comments_per_page">Comments per page: 
+<%= form.select :comments_per_page, (1..25).to_a.reject{|n| n % 5 != 0 } %></label></p>
+
+<%= form.submit "Create blog" %>
+<% end %>

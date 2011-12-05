@@ -1,0 +1,9 @@
+;; Object comment/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "comment/"
+  :tables (list 
+    )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0pre4"
+  :semanticdb-version "2.0pre4"
+  )

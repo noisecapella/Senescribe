@@ -1,0 +1,7 @@
+<% @title = "Fill in information about this user" %>
+
+<% form_for :user, :url => {:action => :create_new_user} do |form| %>
+<p><label for="email">Email</label>: <%= form.text_field :email %></p>
+<p><label for="description">Description</label>: <%= form.text_field :description %></p>
+<%= form.submit "Update", :class => :button %>
+<% end %>

@@ -1,0 +1,26 @@
+<p><%= link_to "Edit profile", :action => :edit, :id => @user %>
+<%= 
+if @user.blog.nil? == false
+  link_to "Go to blog", :controller => :blog, :action => :show, :id => @user.blog
+else
+  link_to "Create blog", :controller => :blog, :action => :new
+end
+
+
+%>
+</p>
+<p><label for="email">Email:</label>
+<%=h @user.email %></p>
+<p><label for="description">Description:</label>
+<%=h @user.description %></p>
+<p><label for="identity_url">URL:</label>
+<%=h @user.identity_url %></p>
+<p><label for="id">ID number:</label>
+<%=h @user.id %></p>
+<p><label for="friends">Friends: </label>
+<%= 
+
+friends = @user.users
+
+friends.map { |friend| link_to friend.description, :action => :profile, :id => friend}.join ", " %>
+</p>

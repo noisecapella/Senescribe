@@ -1,0 +1,40 @@
+<div class="post">
+<% 
+#if post.autosave_text.nil?
+#  text = post.text
+#else
+#  text = post.autosave_text
+#end
+
+text = post.text
+
+if post.autosave_text.nil?
+
+
+  aged_text = Shared.calculate_aged_text(post, text)
+
+  if aged_text.nil?
+   text = h(post.text)
+  else 
+   text = aged_text
+  end
+
+else
+  text = h(post.text)
+end
+
+text = text.gsub("\n", "<br />")
+ %>
+
+
+
+<%= text %>
+</div>
+
+<div style="margin: 15px;">
+<%= link_to "Back to blog", :controller => :blog, :action => :show, :id => post.blog.id %>
+
+<% if user.nil? == false and post.blog.user.id == user.id %>
+<%= link_to "Edit post", :action => :edit, :controller => :post, :id => post %>
+<% end %>
+</div>

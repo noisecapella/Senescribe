@@ -1,0 +1,13 @@
+Updated at <%= Time.now  %><br/>
+<p style="border: solid black 2px;">
+<%
+if @post.autosave_text.nil?
+  text = @post.text
+else
+  text = @post.autosave_text
+end
+
+%>
+<%= Shared.calculate_aged_text(@post, text).gsub("\n", "<br />") %>
+</p>
+    

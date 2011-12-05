@@ -1,0 +1,27 @@
+;; Object blog/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "blog/"
+  :tables (list 
+   (semanticdb-table "new.html.erb"
+    :major-mode 'html-mode
+    :tags 'nil
+    :file "new.html.erb"
+    :pointmax 638
+    )
+   (semanticdb-table "show.html.erb"
+    :major-mode 'html-mode
+    :tags 'nil
+    :file "show.html.erb"
+    :pointmax 1541
+    )
+    (semanticdb-table "edit.html.erb"
+    :major-mode 'html-mode
+    :tags 'nil
+    :file "edit.html.erb"
+    :pointmax 691
+    )
+    )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0pre4"
+  :semanticdb-version "2.0pre4"
+  )

@@ -1,0 +1,18 @@
+<% @title = "Change friends" %>
+
+<p><span class="title">Add a friend by ID number</span></p>
+<% form_tag :action => :add_friend do |form| %>
+  <%= text_field_tag :id %>
+
+  <%= submit_tag "Add friend" %>
+<% end %>
+
+<p><span class="title">Remove a friend</span></p>
+<% if @friends.nil? or @friends.length == 0 %>
+You have no friends to remove
+<% else %>
+ <% for friend in @friends %>
+ <%=h friend.id.to_s %>
+   <%= link_to "Remove %s" % friend.id, :action => :remove_friend, :id => friend.id %><br />
+ <% end %>
+<% end %>

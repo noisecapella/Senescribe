@@ -1,0 +1,26 @@
+<% @title ||= "Blog" %>
+
+<% @logged_in_user = User.find_by_id(session[:user_id]) %>
+<html>
+<head>
+    <%= stylesheet_link_tag @preferred_stylesheet || "default" %>
+    <title><%=h @title %></title>
+<%= javascript_include_tag :defaults %>
+</head>
+<body>
+    <div id="content">
+        <p><span class="title"><%=h @title  %></span></p>
+        <p><span class="flash"><%=h flash[:notice] || "" %></span></p>
+        <div style="text-align: right" align="right">
+<% if @logged_in_user  %>
+Logged in as <%= link_to h(@logged_in_user.description), :controller => :user, :action => :profile, :id => @logged_in_user.id %>
+<%= link_to "Log out?", :controller => :user, :action => :logout %>
+    <% else %>
+    Not logged in. 
+    <%= render :partial => "user/login" %>
+  <%  end
+%></div>
+        <%= yield %>
+    </div>
+</body>
+</html>
