@@ -2,7 +2,7 @@
 @preferred_stylesheet = @blog.style.stylesheet
 %>
 
-<% form_for :blog, @blog, :url => {:action => :update} do |form| %>
+<%= form_for @blog, :url => {:action => :update} do |form| %>
 <p><label for="title">Title: <%= form.text_field :title %></label></p>
 <p><label for="style">Styles: 
         <%= form.select :style_id, @styles.inject(Hash.new) { |all, style| all[style.name] = style.id; all } %></label></p>

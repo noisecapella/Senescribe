@@ -1,6 +1,6 @@
 <% @title = "Create blog" %>
 
-<% form_for :blog, :url => {:action => :create} do |form| %>
+<%= form_for :blog, :url => {:action => :create} do |form| %>
 <p><label for="title">Title: <%= form.text_field :title %></label></p>
 <p><label for="style">Styles: 
         <%= form.select :style_id, @styles.inject(Hash.new) { |all, style| all[style.name] = style.id; all } %></label></p>

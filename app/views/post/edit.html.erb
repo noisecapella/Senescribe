@@ -6,12 +6,14 @@
 <div id="data"></div>
 </td></tr></table>
 
-<%= observe_form "post", :frequency => 2,
-:update => "data", 
-    :url => {:action => :update_edit, :only_path => :false,  :id => @post }
-
-    %>
-
+<script type="javascript">
+var form = $("#post");
+form.bind("blur", new function() {
+  var url = <%= url_for(:action => :update_edit, :only_path => :false); %>;
+  val formData = form.serialize();
+  $.post(url, formData);
+});
+</script>
 
 <%= link_to "Back to blog", :controller => :blog, :action => :show, :id => @blog %>
 

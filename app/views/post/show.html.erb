@@ -10,7 +10,7 @@
 <br /><br /><br /><br />
 <div>
     <span class="title">Post Comment</span><br />
-    <% form_for :comment, :url => {:controller => :comment, :action => :create} do |form| %>
+    <%= form_for :comment, :url => {:controller => :comment, :action => :create} do |form| %>
     <p><label for="subject">Subject: <%= form.text_field :subject %></label></p>
 <table><tr>
 <td><label for="text">Text:</td><td>

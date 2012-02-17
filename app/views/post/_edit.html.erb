@@ -7,7 +7,7 @@ end
 %>
 
 <div>
-<% form_for (:post, :html => {:id => "post"}, :url => {:controller => :post, :action => :update, :id => @post }) do |form| %>
+<%= form_for :post, :html => {:id => "post"}, :url => {:controller => :post, :action => :update, :id => @post } do |form| %>
 <table>
 <tr>
 <td><label for="subject">Subject:</td>
