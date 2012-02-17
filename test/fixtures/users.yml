@@ -14,3 +14,7 @@ other:
         description: Other
         email: noisecapella@gmail.com
         identity_url: http://google.com/
+blogless:
+        description: Blogless Joe
+        email: iregisteredbutidonthaveablog@aol.com
+        identity_url: http://blogspot.com

@@ -7,7 +7,7 @@ class UserController < ApplicationController
     @user = User.find_by_id(session[:user_id])
     if @user.nil?
       flash[:notice] = "User isn't logged in"
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
@@ -20,7 +20,7 @@ class UserController < ApplicationController
     
     if added_friend.nil?
       flash[:notice] = "Could not find user with id %s" % params[:id].to_s
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
@@ -34,7 +34,7 @@ class UserController < ApplicationController
 
     if !@user.save
       flash[:notice] = "Could not add friend"
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
     flash[:notice] = "Friend added."
@@ -45,21 +45,21 @@ class UserController < ApplicationController
     @user = User.find_by_id(session[:user_id])
     if @user.nil?
       flash[:notice] = "User isn't logged in"
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
     @removed_friend = User.find_by_id(params[:id])
     if @removed_friend.nil?
       flash[:notice] = "Could not find user with id %s" % params[:id].to_s
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
     @user.users.delete(@removed_friend)
     if !@user.save
       flash[:notice] = "Could not remove friend"
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
@@ -71,7 +71,7 @@ class UserController < ApplicationController
     @user = User.find_by_id(session[:user_id])
     if @user.nil?
       flash[:notice] = "User isn't logged in"
-      redirect_to :controller => :welcome
+      redirect_to_index
       return
     end
 
@@ -171,20 +171,29 @@ class UserController < ApplicationController
   end
 
   def open_id_authentication(openid_url)
-    authenticate_with_open_id(openid_url) do |result, identity_url|
-      if result.successful?
-        @user = User.find_or_initialize_by_identity_url(identity_url)
-        if @user.new_record?
-          @user = nil
-          session[:identity_url] = identity_url
-          render :action => :fill_new_fields
-          return
+    # this is kind of a hack. It will throw a NoMethodError on nil if
+    # openid_url is an empty string, but only if you're trying to login
+    # for the first time. But, openid_url can legitimately empty if we're
+    # already logged in. 
+    if !request.env[Rack::OpenID::RESPONSE] and (openid_url.nil? or openid_url.empty?)
+      redirect_to_index "OpenID authentication error: OpenID url is empty"
+    else
+
+      authenticate_with_open_id(openid_url) do |result, identity_url|
+        if result.successful?
+          @user = User.find_or_initialize_by_identity_url(identity_url)
+          if @user.new_record?
+            @user = nil
+            session[:identity_url] = identity_url
+            render :action => :fill_new_fields
+            return
+          end
+          
+          
+          successful_login
+        else
+          failed_login result.message
         end
-        
-        
-        successful_login
-      else
-        failed_login result.message
       end
     end
   end

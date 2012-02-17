@@ -38,5 +38,13 @@ class BlogTest < ActiveSupport::TestCase
     assert !blog.valid?
   end
 
-  
+  test "two blogs for one user" do
+    blog = Blog.find_by_title("Blog 2")
+    assert_equal "Other", blog.user.description
+
+    new_blog = Blog.new(:title => "New Blog", :style => Style.find(:all).first,
+                        :posts_per_page => 5, :comments_per_page => 5,
+                        :user => blog.user)
+    assert !new_blog.valid?, "User should have been already taken"
+  end
 end
