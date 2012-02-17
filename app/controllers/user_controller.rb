@@ -79,11 +79,7 @@ class UserController < ApplicationController
   end
 
   def create
-    begin
-      open_id_authentication(params[:openid_url])
-    rescue OpenIdAuthentication::InvalidOpenId => e
-      redirect_to_index "OpenID authentication failed: '%s'" % e.message
-    end
+    open_id_authentication(params[:openid_url])
   end
 
   def destroy
