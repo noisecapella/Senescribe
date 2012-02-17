@@ -4,5 +4,5 @@ class Post < ActiveRecord::Base
   #has_many :words, :order => :current_index
   serialize :serialized_words
 
-  validates_presence_of :blog
+  validates :blog, :precense => true
 end
