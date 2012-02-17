@@ -10,9 +10,12 @@ blog:
         title: "My Blog"
         description: "Blog"
         user: george
+        posts_per_page: 5
+        comments_per_page: 5
 blog2:
         style: default
         title: "Blog 2"
         description: "Blog 2"
         user: other
-        
+        posts_per_page: 5
+        comments_per_page: 5

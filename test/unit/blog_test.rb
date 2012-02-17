@@ -13,8 +13,8 @@ class BlogTest < ActiveSupport::TestCase
     blog_2 = Blog.find_by_title("Blog 2")
 
 
-    assert blog_1.valid?
-    assert blog_2.valid?
+    assert blog_1.valid?, blog_1.errors.messages.to_s
+    assert blog_2.valid?, blog_2.errors.messages.to_s
   end
 
   test "test_initialize_two_blogs_with_same_user" do
@@ -22,7 +22,7 @@ class BlogTest < ActiveSupport::TestCase
     blog_2 = Blog.find_by_title("Blog 2")
     blog_2.user = blog_1.user
     
-    assert blog_1.valid?
+    assert blog_1.valid?, blog_1.errors.messages.to_s
     assert !blog_2.valid?
   end
   
