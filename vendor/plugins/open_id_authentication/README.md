@@ -12,75 +12,100 @@ The specification used is http://openid.net/specs/openid-authentication-2_0.html
 
 
 Prerequisites
-=============
+-------------
 
-OpenID authentication uses the session, so be sure that you haven't turned that off. It also relies on a number of
-database tables to store the authentication keys. So you'll have to run the migration to create these before you get started:
-
-  rake open_id_authentication:db:create
+OpenID authentication uses the session, so be sure that you haven't turned that off.
 
 Alternatively, you can use the file-based store, which just relies on on tmp/openids being present in RAILS_ROOT. But be aware that this store only works if you have a single application server. And it's not safe to use across NFS. It's recommended that you use the database store if at all possible. To use the file-based store, you'll also have to add this line to your config/environment.rb:
 
-  OpenIdAuthentication.store = :file
+    OpenIdAuthentication.store = :file
 
 This particular plugin also relies on the fact that the authentication action allows for both POST and GET operations.
-If you're using RESTful authentication, you'll need to explicitly allow for this in your routes.rb. 
+If you're using RESTful authentication, you'll need to explicitly allow for this in your routes.rb.
+
+The plugin also expects to find a root_url method that points to the home page of your site. You can accomplish this by using a root route in config/routes.rb:
+
+    root :to => "articles#index"
 
 This plugin relies on Rails Edge revision 6317 or newer.
 
 
 Example
-=======
+-------
 
-This example is just to meant to demonstrate how you could use OpenID authentication. You'll might well want to add
+This example is just to meant to demonstrate how you could use OpenID authentication. You might well want to add
 salted hash logins instead of plain text passwords and other requirements on top of this. Treat it as a starting point,
 not a destination.
 
+Note that the User model referenced in the simple example below has an 'identity_url' attribute. You will want to add the same or similar field to whatever
+model you are using for authentication.
+
+Also of note is the following code block used in the example below:
+
+    authenticate_with_open_id do |result, identity_url|
+      ...
+    end
+
+In the above code block, 'identity_url' will need to match user.identity_url exactly. 'identity_url' will be a string in the form of 'http://example.com' -
+If you are storing just 'example.com' with your user, the lookup will fail.
+
+There is a handy method in this plugin called 'normalize_url' that will help with validating OpenID URLs.
+
+    OpenIdAuthentication.normalize_url(user.identity_url)
+
+The above will return a standardized version of the OpenID URL - the above called with 'example.com' will return 'http://example.com/'
+It will also raise an InvalidOpenId exception if the URL is determined to not be valid.
+Use the above code in your User model and validate OpenID URLs before saving them.
+
 config/routes.rb
 
-  map.open_id_complete 'session', :controller => "sessions", :action => "create", :requirements => { :method => :get }
-  map.resource :session
-
+    #config/routes.rb
+    root :to => "articles#index"
+    resource :session
 
 app/views/sessions/new.erb
 
-  <% form_tag(session_url) do %>
-    <p>
-      <label for="name">Username:</label>
-      <%= text_field_tag "name" %>
-    </p>
+    #app/views/sessions/new.erb
+    <% form_tag(session_url) do %>
+      <p>
+        <label for="name">Username:</label>
+        <%= text_field_tag "name" %>
+      </p>
 
-    <p>
-      <label for="password">Password:</label>
-      <%= password_field_tag %>
-    </p>
+      <p>
+        <label for="password">Password:</label>
+        <%= password_field_tag %>
+      </p>
 
-    <p>
-      ...or use:
-    </p>
+      <p>
+        <!-- ...or use: -->
+      </p>
 
-    <p>
-      <label for="openid_url">OpenID:</label>
-      <%= text_field_tag "openid_url" %>
-    </p>
+      <p>
+        <label for="openid_identifier">OpenID:</label>
+        <%= text_field_tag "openid_identifier" %>
+      </p>
 
-    <p>
-      <%= submit_tag 'Sign in', :disable_with => "Signing in&hellip;" %>
-    </p>
-  <% end %>
+      <p>
+        <%= submit_tag 'Sign in', :disable_with => "Signing in&hellip;" %>
+      </p>
+    <% end %>
+
 
 app/controllers/sessions_controller.rb
-  class SessionsController < ApplicationController
-    def create
-      if using_open_id?
-        open_id_authentication
-      else
-        password_authentication(params[:name], params[:password])
+
+    #app/controllers/sessions_controller.rb
+    class SessionsController < ApplicationController
+      def create
+        if using_open_id?
+          open_id_authentication
+        else
+          password_authentication(params[:name], params[:password])
+        end
       end
-    end
 
 
-    protected
+      protected
       def password_authentication(name, password)
         if @current_user = @account.users.authenticate(params[:name], params[:password])
           successful_login
@@ -102,9 +127,9 @@ app/controllers/sessions_controller.rb
           end
         end
       end
-    
-    
-    private
+
+
+      private
       def successful_login
         session[:user_id] = @current_user.id
         redirect_to(root_url)
@@ -114,7 +139,7 @@ app/controllers/sessions_controller.rb
         flash[:error] = message
         redirect_to(new_session_url)
       end
-  end
+    end
 
 
 
@@ -133,7 +158,7 @@ you can collapse the case into a mere boolean:
 
 
 Simple Registration OpenID Extension
-====================================
+------------------------------------
 
 Some OpenID Providers support this lightweight profile exchange protocol.  See more: http://www.openidenabled.com/openid/simple-registration-extension
 
@@ -141,13 +166,16 @@ You can support it in your app by changing #open_id_authentication
 
       def open_id_authentication(identity_url)
         # Pass optional :required and :optional keys to specify what sreg fields you want.
-        # Be sure to yield registration, a third argument in the #authenticate_with_open_id block.
-        authenticate_with_open_id(identity_url, 
+        # Be sure to yield registration, a third argument in the
+        # #authenticate_with_open_id block.
+        authenticate_with_open_id(identity_url,
             :required => [ :nickname, :email ],
-            :optional => :fullname) do |status, identity_url, registration|
-          case status
+            :optional => :fullname) do |result, identity_url, registration|
+          case result.status
           when :missing
             failed_login "Sorry, the OpenID server couldn't be found"
+          when :invalid
+            failed_login "Sorry, but this does not appear to be a valid OpenID"
           when :canceled
             failed_login "OpenID verification was canceled"
           when :failed
@@ -168,7 +196,7 @@ You can support it in your app by changing #open_id_authentication
           end
         end
       end
-      
+
       # registration is a hash containing the valid sreg keys given above
       # use this to map them to fields of your user model
       def assign_registration_attributes!(registration)
@@ -183,5 +211,32 @@ You can support it in your app by changing #open_id_authentication
         { :login => 'nickname', :email => 'email', :display_name => 'fullname' }
       end
 
+Attribute Exchange OpenID Extension
+-----------------------------------
 
-Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license
+Some OpenID providers also support the OpenID AX (attribute exchange) protocol for exchanging identity information between endpoints.  See more: http://openid.net/specs/openid-attribute-exchange-1_0.html
+
+Accessing AX data is very similar to the Simple Registration process, described above -- just add the URI identifier for the AX field to your :optional or :required parameters.  For example:
+
+    authenticate_with_open_id(identity_url,
+      :required => [ :email, 'http://schema.openid.net/birthDate' ]) do 
+        |result, identity_url, registration, ax|
+
+This would provide the sreg data for :email via registration, and the AX data for http://schema.openid.net/birthDate via ax.
+
+Contributing
+------------
+
+Please see the [contribution guidelines](http://github.com/Velir/open_id_authentication/blob/master/CONTRIBUTION_GUIDELINES.md).
+
+Credits
+-------
+
+open_id_authentication was written by David Heinemeier Hansson with a number of other [contributors](https://github.com/Velir/open_id_authentication/contributors).
+
+open_id_authentication maintenance is funded by [Velir](http://velir.com).
+
+
+License
+-------
+Copyright (c) 2007-2011 David Heinemeier Hansson, released under the MIT license
