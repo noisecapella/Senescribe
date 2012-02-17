@@ -176,7 +176,7 @@ class UserController < ApplicationController
     # for the first time. But, openid_url can legitimately empty if we're
     # already logged in. 
     if !request.env[Rack::OpenID::RESPONSE] and (openid_url.nil? or openid_url.empty?)
-      redirect_to_index "OpenID authentication error: OpenID url is empty"
+      redirect_to_index "OpenID authentication failed: OpenID URL is empty"
     else
 
       authenticate_with_open_id(openid_url) do |result, identity_url|

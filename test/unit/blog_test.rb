@@ -38,6 +38,11 @@ class BlogTest < ActiveSupport::TestCase
     assert !blog.valid?
   end
 
+  test "blog_has_user" do
+    blog = Blog.new(:user => User.find_by_description("Blogless Joe"))
+    assert !blog.valid?
+  end
+
   test "two blogs for one user" do
     blog = Blog.find_by_title("Blog 2")
     assert_equal "Other", blog.user.description

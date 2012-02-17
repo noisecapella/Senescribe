@@ -16,11 +16,12 @@ class BlogControllerTest < ActionController::TestCase
   end
 
   #CREATE
-  test "create_empty_blog" do
-    user = User.find_by_description("Blogless Joe")
-    get :create, {}, {:user_id => user.id}
-    assert_redirected_to_index "Blog didn't save: title is missing, style is missing, posts_per_page is missing, comments_per_page is missing"
-  end
+  #test "create_empty_blog" do
+  #  user = User.find_by_description("Blogless Joe")
+
+  #  get :create, {}, {:user => user.id}
+  #  assert_redirected_to_index "Blog didn't save: title is missing, style is missing, posts_per_page is missing, comments_per_page is missing"
+  #end
 
   test "create second blog" do
     user = User.find_by_description("George")
@@ -39,5 +40,10 @@ class BlogControllerTest < ActionController::TestCase
   def assert_redirected_to_index(text)
     assert_equal text, flash[:notice]
     assert_redirected_to :controller => :welcome, :action => :index    
+  end
+
+  def login(user_id)
+    session[:user_id] = user_id
+
   end
 end
