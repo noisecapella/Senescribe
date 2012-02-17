@@ -1,5 +1,5 @@
 class PopulateStylesheets < ActiveRecord::Migration
-  def self.up
+  def change
     Style.delete_all
 
     Style.create(:stylesheet => "default",
@@ -8,9 +8,5 @@ class PopulateStylesheets < ActiveRecord::Migration
     Style.create(:stylesheet => "gzwot",
                  :css => "",
                  :name => "gzwot")
-  end
-
-  def self.down
-    Style.delete_all
   end
 end
