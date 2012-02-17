@@ -1,20 +1,24 @@
 <% @title = @blog.title
 @preferred_stylesheet = @blog.style.stylesheet %>
+
+
 <table><tr><td>
 <%= render :partial => "edit" %>
 
 <div id="data"></div>
 </td></tr></table>
 
-<script type="javascript">
-var form = $("#post");
-form.bind("blur", new function() {
-  var url = <%= url_for(:action => :update_edit, :only_path => :false); %>;
-  val formData = form.serialize();
-  $.post(url, formData);
-});
-</script>
 
 <%= link_to "Back to blog", :controller => :blog, :action => :show, :id => @blog %>
 
 
+<script type="text/javascript">
+$("#post").keyup(function(event) {
+  var url = "<%= url_for(:action => :update_edit, :id => @blog, :only_path => false); %>";
+  var formData = $("#post").serialize();
+
+  $.post(url, formData, function(x) {
+    $("#data").empty().append(x);
+  }, "html");
+});
+</script>

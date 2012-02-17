@@ -62,7 +62,7 @@ class Shared
       #this is technically O(n) but it should rarely do more than one iteration
       #since the words are sorted by age already, we know that once
       #we pass an age, we can ignore it afterward
-      age_index = boundaries.index { |each| each.include? word.created_at }
+      age_index = boundaries.index { |each| each.cover? word.created_at }
       if age_index != 0
         boundaries = boundaries[age_index..-1]
         starting_age_index += age_index

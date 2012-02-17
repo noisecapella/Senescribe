@@ -8,6 +8,6 @@ else
 end
 
 %>
-<%= Shared.calculate_aged_text(@post, text).gsub("\n", "<br />") %>
+<%= Shared.calculate_aged_text(@post, text).gsub("\n", "<br />").html_safe %>
 </p>
     
