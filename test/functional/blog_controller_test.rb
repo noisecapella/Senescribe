@@ -4,25 +4,25 @@ class BlogControllerTest < ActionController::TestCase
   fixtures :users
 
   #NEW
-  def test_new_while_not_logged_in
+  test test_new_while_not_logged_in do
     get :new
     assert_redirected_to_index "Not logged in"
   end
 
-  def test_new
+  test "test_new" do
     user = User.find_by_description("George")
     get :new, {}, {:user_id => user.id}
     assert_response :success
   end
 
   #CREATE
-  def test_create_empty_blog
+  test "test_create_empty_blog" do
     user = User.find_by_description("George")
     get :create, {}, {:user_id => user.id}
     assert_redirected_to_index "Blog didn't save: title is missing, style is missing"
   end
 
-  def test_create_blog_while_not_logged_in
+  test "test_create_blog_while_not_logged_in" do
     style = Style.find_by_name("default")
     get :create, {:blog => {:style => style, :title => "title"}}
 

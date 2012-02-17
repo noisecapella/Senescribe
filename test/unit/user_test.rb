@@ -3,7 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   fixtures :users
 
-  def test_invalid_with_empty_attributes
+  test "test_invalid_with_empty_attributes" do
     user = User.new
     assert !user.valid?
     assert user.errors.invalid?(:identity_url)
@@ -11,7 +11,7 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors.invalid?(:email)
   end
 
-  def test_two_users_with_same_identity_url
+  test "test_two_users_with_same_identity_url" do
     user_1 = User.find_by_description("George")
     user_2 = User.find_by_description("Other")
 
