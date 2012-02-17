@@ -122,7 +122,7 @@ class UserControllerTest < ActionController::TestCase
     params = {:user => {:email => "", :description => "u"}, :id => user.id}
     session = {:user_id => user.id}
     get :update, params, session
-    assert_equal "Unable to update user: email is missing", flash[:notice]
+    assert_equal "Unable to update user: identity_url is missing, description is missing, email is missing", flash[:notice]
     assert_redirected_to :action => :profile, :id => user.id
   end
 
