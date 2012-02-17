@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120217999999) do
+ActiveRecord::Schema.define(:version => 20120218111111) do
 
   create_table "blogs", :force => true do |t|
     t.integer  "style_id"
@@ -75,6 +75,11 @@ ActiveRecord::Schema.define(:version => 20120217999999) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.string   "identity_url"
+  end
+
+  create_table "users_users", :id => false, :force => true do |t|
+    t.integer "user_id",    :null => false
+    t.integer "user_to_id", :null => false
   end
 
 end
