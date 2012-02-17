@@ -6,9 +6,11 @@ class UserTest < ActiveSupport::TestCase
   test "test_invalid_with_empty_attributes" do
     user = User.new
     assert !user.valid?
-    assert user.errors.invalid?(:identity_url)
-    assert user.errors.invalid?(:description)
-    assert user.errors.invalid?(:email)
+    empty = "can't be blank"
+    message = user.errors.full_messages.to_s
+    assert user.errors[:identity_url].first == empty, message
+    assert user.errors[:description].first == empty, message
+    assert user.errors[:email].first == empty, message
   end
 
   test "test_two_users_with_same_identity_url" do
@@ -16,7 +18,7 @@ class UserTest < ActiveSupport::TestCase
     user_2 = User.find_by_description("Other")
 
     user_2.identity_url = user_1.identity_url
-    assert user_1.valid?
+    assert user_1.valid?, user_1.errors.full_messages.to_s
     assert !user_2.valid?
   end
 end
