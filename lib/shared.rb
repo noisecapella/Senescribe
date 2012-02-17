@@ -4,7 +4,7 @@ class Shared
     #convert validation errors into a string
     message = ""
     
-    error_list = error_list.reject { |error| !model.errors.invalid?(error) }
+    #error_list = error_list.reject { |error| !model.errors.invalid?(error) }
     errors = error_list.map { |error| "%s is missing" % error.to_s }
     
     
