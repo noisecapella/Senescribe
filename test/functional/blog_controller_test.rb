@@ -4,7 +4,7 @@ class BlogControllerTest < ActionController::TestCase
   fixtures :users
 
   #NEW
-  test test_new_while_not_logged_in do
+  test "test_new_while_not_logged_in" do
     get :new
     assert_redirected_to_index "Not logged in"
   end
